@@ -109,7 +109,7 @@ class Program
             render.Draw(shape);
         }
 
-        void Circle(int x, int y, float radius, bool fill = false)
+        void Circle(int x, int y, uint radius, bool fill = false)
         {
             CircleShape shape = new();
             shape.Position = new(x, y);
@@ -181,7 +181,7 @@ class Program
         scr.Globals["Clear"] = (Action)Clear;
         scr.Globals["PenColor"] = (Action<bool>)PenColor;
         scr.Globals["Rectangle"] = (Action<int, int, int, int, bool>)Rectangle;
-        scr.Globals["Circle"] = (Action<int, int, float, bool>)Circle;
+        scr.Globals["Circle"] = (Action<int, int, uint, bool>)Circle;
         scr.Globals["Time"] = (Func<double>)Time;
         scr.Globals["InputDown"] = (Func<uint, bool>)InputDown;
         scr.Globals["Text"] = (Action<int, int, string>)Text;
