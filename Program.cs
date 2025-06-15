@@ -36,9 +36,24 @@ class Program
         RenderWindow window = new RenderWindow(mode, "RC-01", Styles.Close);
         RenderTexture render = new RenderTexture(screenWidth, screenHeight);
         Texture borderTexture = new Texture("resources/border.png");
+        Texture fontTexture = new Texture("resources/font.png");
+        string fontChars = " ./0123456789:<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^abcdefghijklmnopqrstuvwxyz{}!\"\'()*+,-";
+        const uint fontWidth = 6;
+
+        void DrawFrame(RenderTarget target, Texture texture, uint width, uint index, Vector2f position, Color tint)
+        {
+            Sprite frame = new();
+            frame.Texture = texture;
+            frame.TextureRect = new(new((int)(index * width), 0), new((int)width, (int)texture.Size.Y));
+            frame.Position = position;
+            frame.Color = tint;
+
+            target.Draw(frame);
+        }
+
         render.Clear(bg);
 
-        void DrawLine(uint x1, uint y1, uint x2, uint y2)
+        void DrawLine(int x1, int y1, int x2, int y2)
         {
             VertexArray array = new VertexArray();
             array.PrimitiveType = PrimitiveType.Lines;
@@ -56,7 +71,27 @@ class Program
         }
 
         // Lua function set
-        void Rectangle(uint x, uint y, uint sizex, uint sizey, bool fill = false)
+        void DrawChar(int x, int y, char letter)
+        {
+            if (fontChars.Contains(letter))
+            {
+                uint index = (uint)fontChars.IndexOf(letter);
+                DrawFrame(render, fontTexture, fontWidth, index, new(x * fontWidth, y * fontTexture.Size.Y), pen);
+            }
+        }
+
+        void Text(int x, int y, string text)
+        {
+            Vector2u pos = new(0, 0);
+
+            foreach (char character in text)
+            {
+                DrawChar((int)(x + pos.X), (int)(y + pos.Y), character);
+                pos.X++;
+            }
+        }
+
+        void Rectangle(int x, int y, int sizex, int sizey, bool fill = false)
         {
             RectangleShape shape = new();
             shape.Position = new(x, y);
@@ -74,7 +109,7 @@ class Program
             render.Draw(shape);
         }
 
-        void Circle(uint x, uint y, float radius, bool fill = false)
+        void Circle(int x, int y, float radius, bool fill = false)
         {
             CircleShape shape = new();
             shape.Position = new(x, y);
@@ -93,14 +128,14 @@ class Program
             render.Draw(shape);
         }
 
-        void Horizontal(uint y)
+        void Horizontal(int y)
         {
-            DrawLine(0, y, render.Size.X, y);
+            DrawLine(0, y, (int)render.Size.X, y);
         }
 
-        void Vertical(uint x)
+        void Vertical(int x)
         {
-            DrawLine(x, 0, x, render.Size.Y);
+            DrawLine(x, 0, x, (int)render.Size.Y);
         }
 
         void PenColor(bool on)
@@ -119,18 +154,37 @@ class Program
             return time;
         }
 
+        bool InputDown(uint input)
+        {
+            switch(input)
+            {
+                case 0:
+                    return Keyboard.IsKeyPressed(Keyboard.Key.Left) || Keyboard.IsKeyPressed(Keyboard.Key.A);
+                case 1:
+                    return Keyboard.IsKeyPressed(Keyboard.Key.Right) || Keyboard.IsKeyPressed(Keyboard.Key.D);
+                case 2:
+                    return Keyboard.IsKeyPressed(Keyboard.Key.Up) || Keyboard.IsKeyPressed(Keyboard.Key.W);
+                case 3:
+                    return Keyboard.IsKeyPressed(Keyboard.Key.Down) || Keyboard.IsKeyPressed(Keyboard.Key.S);
+            }
+
+            return false;
+        }
+
         Script scr = new Script();
         scr.Options.DebugPrint = s => { Console.WriteLine(s); };
         scr.DoFile("lib/rc10.lua");
 
         //Define in-built functions
-        scr.Globals["Horizontal"] = (Action<uint>)Horizontal;
-        scr.Globals["Vertical"] = (Action<uint>)Vertical;
+        scr.Globals["Horizontal"] = (Action<int>)Horizontal;
+        scr.Globals["Vertical"] = (Action<int>)Vertical;
         scr.Globals["Clear"] = (Action)Clear;
         scr.Globals["PenColor"] = (Action<bool>)PenColor;
-        scr.Globals["Rectangle"] = (Action<uint, uint, uint, uint, bool>)Rectangle;
-        scr.Globals["Circle"] = (Action<uint, uint, float, bool>)Circle;
+        scr.Globals["Rectangle"] = (Action<int, int, int, int, bool>)Rectangle;
+        scr.Globals["Circle"] = (Action<int, int, float, bool>)Circle;
         scr.Globals["Time"] = (Func<double>)Time;
+        scr.Globals["InputDown"] = (Func<uint, bool>)InputDown;
+        scr.Globals["Text"] = (Action<int, int, string>)Text;
 
         scr.DoFile("main.lua");
 
