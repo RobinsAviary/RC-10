@@ -18,6 +18,9 @@ class Program
     [STAThread]
     public static void Main()
     {
+        double time = 0;
+
+        Color renderBg = new Color(198, 216, 182);
         Color bg = new Color(167, 193, 145);
         Color fg = new Color(13, 15, 11);
         Color border = new Color(241, 244, 235);
@@ -27,6 +30,8 @@ class Program
 
         mode.Width = (uint)(windowWidth);
         mode.Height = (uint)(windowHeight);
+
+        Clock deltaTimer = new();
 
         RenderWindow window = new RenderWindow(mode, "RC-01", Styles.Close);
         RenderTexture render = new RenderTexture(screenWidth, screenHeight);
@@ -50,6 +55,44 @@ class Program
             render.Draw(array);
         }
 
+        // Lua function set
+        void Rectangle(uint x, uint y, uint sizex, uint sizey, bool fill = false)
+        {
+            RectangleShape shape = new();
+            shape.Position = new(x, y);
+            shape.Size = new(sizex, sizey);
+            if (fill)
+            {
+                shape.FillColor = pen;
+            } else
+            {
+                shape.FillColor = Color.Transparent;
+                shape.OutlineColor = pen;
+                shape.OutlineThickness = 1;
+            }
+
+            render.Draw(shape);
+        }
+
+        void Circle(uint x, uint y, float radius, bool fill = false)
+        {
+            CircleShape shape = new();
+            shape.Position = new(x, y);
+            shape.Radius = radius;
+
+            if (fill)
+            {
+                shape.FillColor = pen;
+            } else
+            {
+                shape.FillColor = Color.Transparent;
+                shape.OutlineColor = pen;
+                shape.OutlineThickness = 1;
+            }
+
+            render.Draw(shape);
+        }
+
         void Horizontal(uint y)
         {
             DrawLine(0, y, render.Size.X, y);
@@ -71,14 +114,23 @@ class Program
             render.Clear(pen);
         }
 
+        double Time()
+        {
+            return time;
+        }
+
         Script scr = new Script();
         scr.Options.DebugPrint = s => { Console.WriteLine(s); };
+        scr.DoFile("lib/rc10.lua");
 
         //Define in-built functions
         scr.Globals["Horizontal"] = (Action<uint>)Horizontal;
         scr.Globals["Vertical"] = (Action<uint>)Vertical;
         scr.Globals["Clear"] = (Action)Clear;
         scr.Globals["PenColor"] = (Action<bool>)PenColor;
+        scr.Globals["Rectangle"] = (Action<uint, uint, uint, uint, bool>)Rectangle;
+        scr.Globals["Circle"] = (Action<uint, uint, float, bool>)Circle;
+        scr.Globals["Time"] = (Func<double>)Time;
 
         scr.DoFile("main.lua");
 
@@ -92,6 +144,8 @@ class Program
         window.Closed += Window_Closed;
 
         object updateFunc = scr.Globals["update"];
+
+        deltaTimer.Restart();
 
         while (window.IsOpen)
         {
@@ -126,11 +180,20 @@ class Program
 
             window.Clear(bg);
 
+            RectangleShape renderBgShape = new();
+            renderBgShape.Position = new((screenWidth * scale) / 8, (screenHeight * scale) / 8);
+            renderBgShape.Size = new(screenWidth * scale, screenHeight * scale);
+            renderBgShape.FillColor = renderBg;
+
+            window.Draw(renderBgShape);
+
             window.Draw(offsetSprite);
             window.Draw(sprite);
             window.Draw(borderSprite);
 
             window.Display();
+
+            time = deltaTimer.Restart().AsSeconds();
         }
     }
 }
