@@ -33,7 +33,7 @@ class Program
 
         Clock deltaTimer = new();
 
-        RenderWindow window = new RenderWindow(mode, "RC-01", Styles.Close);
+        RenderWindow window = new RenderWindow(mode, "RC-10", Styles.Close);
         RenderTexture render = new RenderTexture(screenWidth, screenHeight);
         Texture borderTexture = new Texture("resources/border.png");
         Texture fontTexture = new Texture("resources/font.png");
