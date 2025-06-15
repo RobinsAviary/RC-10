@@ -53,6 +53,8 @@ class Program
 
         render.Clear(bg);
 
+        // Lua function set
+
         void DrawLine(int x1, int y1, int x2, int y2)
         {
             VertexArray array = new VertexArray();
@@ -70,7 +72,6 @@ class Program
             render.Draw(array);
         }
 
-        // Lua function set
         void DrawChar(int x, int y, char letter)
         {
             if (fontChars.Contains(letter))
@@ -185,6 +186,7 @@ class Program
         scr.Globals["Time"] = (Func<double>)Time;
         scr.Globals["InputDown"] = (Func<uint, bool>)InputDown;
         scr.Globals["Text"] = (Action<int, int, string>)Text;
+        scr.Globals["Line"] = (Action<int, int, int, int>)DrawLine;
 
         scr.DoFile("main.lua");
 
