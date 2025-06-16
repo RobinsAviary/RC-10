@@ -1,7 +1,16 @@
 # RC-10
 A fantasy calculator!
 
-![](git-resources/screen.png)
+![RC-10 Logo](git-resources/logo.png)
+
+!["Hello, World!" Screenshot](git-resources/screen.png)
+```
+Text(0, 0, "Hello, World!")
+```
+
+## Learn
+
+You can find the [Wiki here](https://github.com/RobinsAviary/RC-10/wiki).
 
 ## Dependencies
 - [SFML.Net](https://www.sfml-dev.org/download/sfml.net/)
