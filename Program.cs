@@ -14,6 +14,9 @@ class Program
     public const uint windowWidth = 480;
     public const uint windowHeight = 320;
     public const uint scale = 4;
+    public const string resourcesDir = "resources/";
+    public const string imageDir = resourcesDir + "images/";
+    public const string libraryDir = resourcesDir + "libraries/";
 
     [STAThread]
     public static void Main()
@@ -35,8 +38,8 @@ class Program
 
         RenderWindow window = new RenderWindow(mode, "RC-10", Styles.Close);
         RenderTexture render = new RenderTexture(screenWidth, screenHeight);
-        Texture borderTexture = new Texture("resources/border.png");
-        Texture fontTexture = new Texture("resources/font.png");
+        Texture borderTexture = new Texture(imageDir + "border.png");
+        Texture fontTexture = new Texture(imageDir + "font.png");
         string fontChars = " ./0123456789:<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^abcdefghijklmnopqrstuvwxyz{}!\"\'()*+,-";
         const uint fontWidth = 6;
 
@@ -174,7 +177,7 @@ class Program
 
         Script scr = new Script();
         scr.Options.DebugPrint = s => { Console.WriteLine(s); };
-        scr.DoFile("lib/rc10.lua");
+        scr.DoFile(libraryDir + "rc10.lua");
 
         //Define in-built functions
         scr.Globals["Horizontal"] = (Action<int>)Horizontal;
