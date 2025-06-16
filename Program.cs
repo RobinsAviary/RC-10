@@ -234,9 +234,6 @@ class Program
             PenColor(false);
             Clear();
 
-            StringReader reader = new(text);
-            reader.ReadBlock()
-
             Text(0, 0, text);
         }
 
