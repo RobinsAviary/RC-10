@@ -1,7 +1,7 @@
 # RC-10
 A fantasy calculator!
 
-![](screen.png)
+![](git-resources/screen.png)
 
 ## Dependencies
 - [SFML.Net](https://www.sfml-dev.org/download/sfml.net/)
