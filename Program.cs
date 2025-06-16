@@ -40,7 +40,7 @@ class Program
         RenderTexture render = new RenderTexture(screenWidth, screenHeight);
         Texture borderTexture = new Texture(imageDir + "border.png");
         Texture fontTexture = new Texture(imageDir + "font.png");
-        string fontChars = " ./0123456789:<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^abcdefghijklmnopqrstuvwxyz{}!\"\'()*+,-";
+        string fontChars = " ./0123456789:<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^abcdefghijklmnopqrstuvwxyz{}!\"\'()*+,-░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀";
         const uint fontWidth = 6;
 
         void DrawFrame(RenderTarget target, Texture texture, uint width, uint index, Vector2f position, Color tint)
