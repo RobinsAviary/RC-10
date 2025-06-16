@@ -97,19 +97,21 @@ class Program
 
         void Rectangle(int x, int y, int sizex, int sizey, bool fill = false)
         {
+            // Due to SFML shenanigans this is the most reliable way to do it
             RectangleShape shape = new();
-            shape.Position = new(x, y);
-            shape.Size = new(sizex, sizey);
-            if (fill)
+            if (fill || sizex < 2 || sizey < 2)
             {
                 shape.FillColor = pen;
+                shape.Size = new(sizex, sizey);
             } else
             {
                 shape.FillColor = Color.Transparent;
                 shape.OutlineColor = pen;
                 shape.OutlineThickness = 1;
+                shape.Size = new(sizex - 1, sizey - 1);
             }
-
+            shape.Position = new(x, y);
+            
             render.Draw(shape);
         }
 
@@ -148,9 +150,22 @@ class Program
             else pen = bg;
         }
 
+        void SetPixel(int x, int y, bool on)
+        {
+            Rectangle(x, y, 1, 1);
+        }
+
+        //bool GetPixel()
+
         void Clear()
         {
-            render.Clear(pen);
+            if (pen == bg)
+            {
+                render.Clear(fg);
+            } else if (pen == fg)
+            {
+                render.Clear(bg);
+            }
         }
 
         double Time()
@@ -190,6 +205,7 @@ class Program
         scr.Globals["InputDown"] = (Func<uint, bool>)InputDown;
         scr.Globals["Text"] = (Action<int, int, string>)Text;
         scr.Globals["Line"] = (Action<int, int, int, int>)DrawLine;
+        scr.Globals["SetPixel"] = (Action<int, int, bool>)SetPixel;
 
         scr.DoFile("main.lua");
 
