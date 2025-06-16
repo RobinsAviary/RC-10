@@ -8,4 +8,4 @@ A fantasy calculator!
 - [MoonSharp](https://www.moonsharp.org/)
 
 ## License
-RC-10 is provided for free under the [Unlicense](https://unlicense.org/) 
+RC-10 is provided for free under the [Unlicense](https://unlicense.org/).
