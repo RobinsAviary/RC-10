@@ -4,6 +4,9 @@ A fantasy calculator!
 ![RC-10 Logo](git-resources/logo.png)
 
 !["Hello, World!" Screenshot](git-resources/screen.png)
+```
+Text(0, 0, "Hello, World!")
+```
 
 ## Learn
 
