@@ -2,6 +2,7 @@
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using System.Linq.Expressions;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -14,7 +15,7 @@ class Program
     public const uint windowWidth = 480;
     public const uint windowHeight = 320;
     public const uint scale = 4;
-    public const string resourcesDir = "resources/";
+    public const string resourcesDir = "./resources/";
     public const string imageDir = resourcesDir + "images/";
     public const string libraryDir = resourcesDir + "libraries/";
 
@@ -208,14 +209,35 @@ class Program
         scr.Globals["Text"] = (Action<int, int, string>)Text;
         scr.Globals["Line"] = (Action<int, int, int, int>)DrawLine;
         scr.Globals["SetPixel"] = (Action<int, int, bool>)SetPixel;
-
-        scr.DoFile("main.lua");
+        if (File.Exists("main.lua"))
+        {
+            try
+            {
+                scr.DoFile("main.lua");
+            }
+            catch (InterpreterException ex)
+            {
+                ShowError(ex.DecoratedMessage);
+            }
+        }
 
         // Set up event handler
         void Window_Closed(object sender, EventArgs e)
         {
             var window = (SFML.Window.Window)sender;
             window.Close();
+        }
+
+        void ShowError(string text)
+        {
+            Console.WriteLine("User's script threw an exception! {0}", text);
+            PenColor(false);
+            Clear();
+
+            StringReader reader = new(text);
+            reader.ReadBlock()
+
+            Text(0, 0, text);
         }
 
         window.Closed += Window_Closed;
@@ -231,7 +253,13 @@ class Program
             // Make sure we have an update function
             if (updateFunc != null)
             {
-                scr.Call(scr.Globals["update"]);
+                try
+                {
+                    scr.Call(scr.Globals["update"]);
+                }
+                catch(InterpreterException ex) {
+                    ShowError(ex.DecoratedMessage);
+                }
             }
 
             // Turn the screen into a texture/sprite
