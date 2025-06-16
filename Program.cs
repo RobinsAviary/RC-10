@@ -175,6 +175,8 @@ class Program
 
         bool InputDown(uint input)
         {
+            if (!window.HasFocus()) return false;
+
             switch(input)
             {
                 case 0:
